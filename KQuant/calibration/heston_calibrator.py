@@ -8,7 +8,7 @@ class HestonCalibrator():
     Calibrate Heston model parameters using price or implied volatility errors.
     """
 
-    def __init__(self, engine, method, max_iter):
+    def __init__(self, engine, method, max_iter = 50, tol = 1e-10):
         """
         Initialize the Heston calibrator.
 
@@ -20,6 +20,8 @@ class HestonCalibrator():
             Calibration objective. Can be "price" or "implied_volatility".
         max_iter : int
             Maximum number of optimization iterations.
+        tol : float
+            Optimization tolerance controlling the convergence criterion.
         """
         if method not in ["price", "implied_volatility"]:
 
@@ -28,9 +30,10 @@ class HestonCalibrator():
         self.engine = engine
         self.method = method
         self.max_iter = max_iter
+        self.tol = tol
 
 
-    def objective_using_vol(self, params, r, market, surface): # signature a changer mettre r dans market
+    def objective_using_vol(self, params, r, market, surface):
         """
         Compute the calibration error between Heston and market implied volatilities.
 
@@ -62,7 +65,7 @@ class HestonCalibrator():
         return error
 
 
-    def objective_using_price(self, params, r, market, surface): # signature a changer mettre r dans market
+    def objective_using_price(self, params, r, market, surface): 
             """
             Compute the calibration error between Heston and market prices.
     
@@ -108,8 +111,8 @@ class HestonCalibrator():
         
         Returns
         -------
-        list
-            Calibrated Heston parameters.
+        tuple
+            Calibrated Heston parameters and calibration error.
         """
 
         best_error = np.inf
@@ -119,16 +122,16 @@ class HestonCalibrator():
 
             params = [np.random.uniform(low, high) for low, high in bounds]
             if(self.method == "implied_volatility"):
-                error = self.objective_using_vol(r,params, market, surface)
+                error = self.objective_using_vol(params, r, market, surface)
             else :
-                error = self.objective_using_price(r,params, market, surface)
+                error = self.objective_using_price(params, r, market, surface)
 
 
             if error < best_error:
                 best_error = error
                 best_params = params
 
-        return best_params
+        return best_params, best_error
 
 
     def calibrate_scipy(self, r, market, surface, initial_guess, bounds):
@@ -161,10 +164,10 @@ class HestonCalibrator():
 
         if(self.method == "price"):
             result = minimize(fun=self.objective_using_price, x0=initial_guess, args=(r, market, surface),
-                               bounds=bounds, method="L-BFGS-B", options={"maxiter": self.max_iter})
+                               bounds=bounds, method="L-BFGS-B", options={"maxiter": self.max_iter, "ftol": self.tol})
 
         else:
             result = minimize(fun=self.objective_using_vol, x0=initial_guess, args=(r, market, surface),
-                                           bounds=bounds, method="L-BFGS-B", options={"maxiter": self.max_iter})
+                                           bounds=bounds, method="L-BFGS-B", options={"maxiter": self.max_iter, "ftol":self.tol})
             
         return result.x, result.fun

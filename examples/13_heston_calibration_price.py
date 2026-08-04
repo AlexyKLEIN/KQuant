@@ -20,11 +20,19 @@ bs_model = BlackAndScholes(r=0.02, sigma=0.20)
 bs_engine = AnalyticEngine()
 
 options = [
+    EuropeanOption(K=80, T=0.25, option_type="call"),
+    EuropeanOption(K=90, T=0.25, option_type="call"),
+    EuropeanOption(K=100, T=0.25, option_type="call"),
+
     EuropeanOption(K=80, T=0.5, option_type="call"),
-    EuropeanOption(K=90, T=0.5, option_type="call"),
     EuropeanOption(K=100, T=0.5, option_type="call"),
-    EuropeanOption(K=110, T=0.5, option_type="call"),
     EuropeanOption(K=120, T=0.5, option_type="call"),
+
+    EuropeanOption(K=90, T=1.0, option_type="call"),
+    EuropeanOption(K=100, T=1.0, option_type="call"),
+    EuropeanOption(K=110, T=1.0, option_type="call"),
+
+    EuropeanOption(K=100, T=2.0, option_type="call"),
 ]
 
 prices = []
@@ -41,7 +49,7 @@ engine = HestonFourierEngine()
 
 
 # Heston calibrator
-calibrator = HestonCalibrator(engine=engine, method="price", max_iter=20)
+calibrator = HestonCalibrator(engine=engine, method="price", max_iter=50)
 
 
 initial_guess = [
@@ -63,9 +71,9 @@ bounds = [
 
 
 # Calibrate Heston parameters
-params = calibrator.calibrate_scipy(market=market, surface=surface, r=0.02, initial_guess=initial_guess, bounds=bounds)
+params, error = calibrator.calibrate_scipy(market=market, surface=surface, r=0.02, initial_guess=initial_guess, bounds=bounds)
 
-
+print("Calibration error:", error)
 print("Calibrated Heston parameters:")
 print(f"v0    = {params[0]:.4f}")
 print(f"kappa = {params[1]:.4f}")
