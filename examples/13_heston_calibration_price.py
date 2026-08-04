@@ -41,7 +41,7 @@ engine = HestonFourierEngine()
 
 
 # Heston calibrator
-calibrator = HestonCalibrator(engine=engine, method="price", max_iter=50)
+calibrator = HestonCalibrator(engine=engine, method="price", max_iter=20)
 
 
 initial_guess = [

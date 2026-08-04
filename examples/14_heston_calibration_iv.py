@@ -36,7 +36,7 @@ surface = VolatilitySurface(options, vols)
 engine = HestonFourierEngine()
 
 # Calibrator
-calibrator = HestonCalibrator(engine=engine, method="implied_volatility", max_iter=50)
+calibrator = HestonCalibrator(engine=engine, method="implied_volatility", max_iter=20)
 
 initial_guess = [0.04, 2.0, 0.04, 0.30, -0.70]
 

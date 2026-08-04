@@ -14,7 +14,7 @@ class HestonFourierEngine(PricingEngine):
         - Product: EuropeanOption
     """
 
-    def __init__(self, n_integration=20000):
+    def __init__(self, n_integration=2000):
         """
         Initialize the Fourier integration settings.
 
