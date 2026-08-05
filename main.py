@@ -101,9 +101,14 @@ print(f"DandI + DandO : {price+price_2}")
 
 
 ### Semaine pro ###  
-# finir exemple 13 remplir Git ignore et Read Me et ewemple plus poussé 'convergence monte carlo, comparaison vitesse, smile ....
+# tester exemple 13 
+# Humaniser Read Me
+# exemple plus poussé 'convergence monte carlo, comparaison vitesse, smile ....
 
-#Dire dans la doc pas d example sur calibrate sans spicy pour des raison de vitesse
+#Dire dans la doc ou dan sle fichier test pas d example sur calibrate sans spicy pour des raison de vitesse
+# Temps de calcul enorme calibration Heston, pas identifiable, pas asser option ....
+
+
 """
 Gamma estimation with Monte Carlo finite differences is less stable than other Greeks.
 Gamma is computed using a second-order finite difference approximation:
