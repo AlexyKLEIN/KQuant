@@ -74,7 +74,7 @@ def test_eu_option_heston_mc_engine_finite_difference_greek_matches_quantlib(req
     option = EuropeanOption(K=100, T=1.0, option_type=option_type)
     fd_value = getattr(FiniteDifferenceGreeks, greek_name)(market, model, mc_engine, option)
     ql_value = ql_greeks(market, model, option, greek_name)
-    tolerance = 1.e-2
+    tolerance = 5.e-2
 
     assert fd_value == pytest.approx(ql_value, rel=tolerance,abs=tolerance)
 

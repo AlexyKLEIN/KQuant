@@ -100,7 +100,7 @@ cd KQuant
 ## Install the package
 
 ```bash
-pip install -e .
+pip install -e .[test]
 ```
 
 ## Requirements
@@ -540,6 +540,11 @@ Run tests:
 
 ```bash
 pytest
+```
+
+*Note for Windows users: If the `pytest` command is not recognized, use:*
+```bash
+python -m pytest
 ```
 
 Validation includes comparisons between:

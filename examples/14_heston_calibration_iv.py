@@ -29,7 +29,9 @@ options = [
     EuropeanOption(K=100, T=1.0, option_type="call"),
     EuropeanOption(K=110, T=1.0, option_type="call"),
 
+    EuropeanOption(K=90, T=2.0, option_type="call"),
     EuropeanOption(K=100, T=2.0, option_type="call"),
+    EuropeanOption(K=110, T=2.0, option_type="call"),
 ]
 
 vols = []
@@ -58,7 +60,7 @@ bounds = [
     (0.001, 0.5),   # v0
     (0.1, 10.0),    # kappa
     (0.001, 0.5),   # theta
-    (0.01, 2.0),    # xi
+    (0.001, 1.0),    # xi
     (-0.99, 0.99),  # rho
 ]
 

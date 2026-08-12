@@ -14,3 +14,10 @@ dependencies = [
 authors = [
     {name = "Alexy Klein"}
 ]
+
+[project.optional-dependencies]
+test = [
+    "pytest", 
+    "QuantLib",   # Requis uniquement pour lancer les tests
+]
+

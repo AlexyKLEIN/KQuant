@@ -67,12 +67,12 @@ def down_out_call_option():
 @pytest.fixture
 def up_out_call_option():
     """At-the-money ip-and-out call, 1 year maturity."""
-    return BarrierOption(K=100, T=1.0, option_type="call", barrier_type="up-and-out", barrier=90)
+    return BarrierOption(K=100, T=1.0, option_type="call", barrier_type="up-and-out", barrier=110)
 
 @pytest.fixture
 def up_in_call_option():
     """At-the-money up-and-in call, 1 year maturity."""
-    return BarrierOption(K=100, T=1.0, option_type="call", barrier_type="up-and-in", barrier=90)
+    return BarrierOption(K=100, T=1.0, option_type="call", barrier_type="up-and-in", barrier=110)
 
 @pytest.fixture
 def down_in_put_option():
@@ -87,12 +87,12 @@ def down_out_put_option():
 @pytest.fixture
 def up_out_put_option():
     """At-the-money ip-and-out put, 1 year maturity."""
-    return BarrierOption(K=100, T=1.0, option_type="put", barrier_type="up-and-out", barrier=90)
+    return BarrierOption(K=100, T=1.0, option_type="put", barrier_type="up-and-out", barrier=110)
 
 @pytest.fixture
 def up_in_put_option():
     """At-the-money up-and-in put, 1 year maturity."""
-    return BarrierOption(K=100, T=1.0, option_type="put", barrier_type="up-and-in", barrier=90)
+    return BarrierOption(K=100, T=1.0, option_type="put", barrier_type="up-and-in", barrier=110)
 
 @pytest.fixture
 def analytic_engine():

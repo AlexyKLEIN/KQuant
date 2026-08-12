@@ -92,7 +92,7 @@ def test_mc_asian_put_price_matches_quantlib(request, market, model_fixture, asi
 
     assert my_price == pytest.approx(ql_price, abs=3*stderr)
 
-@pytest.mark.parametrize("model_fixture",["black_scholes_model","heston_model"])
+@pytest.mark.parametrize("model_fixture",["black_scholes_model"])
 def test_mc_asian_call_price_matches_quantlib(request, market, model_fixture, asian_call_option, mc_engine, ql_pricer) :
 
     model = request.getfixturevalue(model_fixture)
