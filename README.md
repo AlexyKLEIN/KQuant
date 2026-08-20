@@ -192,13 +192,45 @@ KQuant/
 
 # Quick Start
 
-Run an example:
+You can run the built-in pricing example directly from your terminal:
 
 ```bash
 python examples/01_black_scholes_pricing.py
 ```
 
-Available examples demonstrate:
+Here is a quick look at how to use KQuant to price a standard European Call option using the analytical Black-Scholes engine:
+
+```python
+from KQuant.market import MarketData
+from KQuant.models import BlackAndScholes
+from KQuant.products import EuropeanOption
+from KQuant.pricing import AnalyticEngine
+
+# Market data
+market = MarketData(spot=100)
+
+# Model
+model = BlackAndScholes(r=0.02, sigma=0.20)
+
+# Product
+option = EuropeanOption(K=100, T=1.0, option_type="call")
+
+# Pricing
+engine = AnalyticEngine()
+price = engine.price(market, model, option)
+
+print("European Call Option")
+print("----------------------")
+print(f"Spot       : {market.spot}")
+print(f"Strike     : {option.K}")
+print(f"Maturity   : {option.T} year")
+print(f"Volatility : {model.sigma:.0%}")
+print(f"Rate       : {model.r:.0%}")
+print()
+print(f"Price      : {price:.4f}")
+```
+
+Available examples in the `examples/` directory demonstrate more advanced use cases:
 
 - European option pricing
 - Monte Carlo pricing
@@ -304,11 +336,11 @@ Used for:
 The Heston model introduces stochastic volatility.
 
 $$
-dS_t=rS_tdt+\sqrt{v_t}S_tdW_t
+dS_t=rS_tdt+\sqrt{v_t}S_tdW^S_t
 $$
 
 $$
-dv_t=\kappa(\theta-v_t)dt+\xi\sqrt{v_t}dW_t
+dv_t=\kappa(\theta-v_t)dt+\xi\sqrt{v_t}dW^v_t
 $$
 
 Parameters:
@@ -319,7 +351,7 @@ Parameters:
 | kappa | Mean reversion speed |
 | theta | Long-term variance |
 | xi | Volatility of volatility |
-| rho | Correlation |
+| rho | Correlation between $W^S$ and $W^v$ |
 
 Used for:
 
@@ -351,20 +383,6 @@ Currently supports:
 
 - Black-Scholes model
 - European options
-
-Example:
-
-```python
-from KQuant.pricing import AnalyticEngine
-
-engine = AnalyticEngine()
-
-price = engine.price(
-    market,
-    model,
-    option
-)
-```
 
 ---
 
@@ -401,6 +419,7 @@ Advantages:
 
 Supported:
 
+- Heston model
 - European options
 
 ---
@@ -486,11 +505,11 @@ Stores implied volatilities across:
 
 The Heston calibrator estimates the model parameters:
 
-- initial variance \(v_0\)
-- mean reversion speed \(\kappa\)
-- long-term variance \(\theta\)
-- volatility of volatility \(\xi\)
-- correlation between asset and volatility processes \(\rho\)
+- initial variance \($v_0$\)
+- mean reversion speed \($\kappa$\)
+- long-term variance \($\theta$\)
+- volatility of volatility \($\xi$\)
+- correlation between asset and volatility processes \($\rho$\)
 
 The calibration can be performed using different market targets:
 
@@ -500,6 +519,13 @@ The calibration can be performed using different market targets:
 The calibration can be performed using either a custom optimization approach or SciPy optimization algorithms for faster convergence.
 
 The objective is to minimize the difference between model outputs and market observations.
+
+When calibrating the Heston model, please keep in mind the following practical and theoretical constraints:
+
+- **Custom Optimization vs SciPy:** The custom optimization approach is highly time-consuming and computationally expensive. For this reason, examples and test cases do not provide unoptimized runs without SciPy.
+- **Identifiability Issues:** The objective function for Heston calibration is notoriously non-convex and often features multiple local minima. This can lead to **parameter non-identifiability** (different sets of parameters yielding similar option prices).
+- **Market Data Requirements:** A reliable calibration requires a dense and high-quality price or volatility surface. Calibrating the model with an insufficient number of option contracts or sparse maturities will lead to unstable and economically meaningless parameters. For demonstration purposes and to keep execution times reasonable, calibration is demonstrated on small synthetic/restricted surfaces for computational reasons, robust production calibration requires a dense market surface.
+
 
 ---
 
@@ -536,15 +562,26 @@ Tests cover:
 - Greeks computation
 - calibration methods
 
-Run tests:
+Run all the tests:
 
 ```bash
 pytest
 ```
 
+Run specific test modules:
+
+```bash
+pytest tests/test_engines.py
+pytest tests/test_greeks.py
+pytest tests/test_calibration.py
+```
+
 *Note for Windows users: If the `pytest` command is not recognized, use:*
 ```bash
 python -m pytest
+python -m pytest tests/test_engines.py
+python -m pytest tests/test_greeks.py
+python -m pytest tests/test_calibration.py
 ```
 
 Validation includes comparisons between:
@@ -553,16 +590,18 @@ Validation includes comparisons between:
 - Monte Carlo estimations
 - QuantLib benchmarks
 
+Notes on Test Precision & Stability:
+- **Test Speed vs. Accuracy:** To keep the test suite fast, the number of Monte Carlo paths used in the tests is intentionally restricted. Consequently, numerical tolerances for convergence tests are set to be relatively flexible.
+- **Barrier Option Greeks:** The numerical estimation of **Greeks for Barrier Options** via finite differences exhibits significant instability. This is an expected theoretical behavior due to the discontinuity of the payoff at the barrier level. 
+
 ---
 
 # Future Improvements
 
 Possible extensions:
 
+- Continuous dividend yield integration
 - American options
-- local volatility models
-- SABR model
-- automatic differentiation Greeks
-- variance reduction techniques
+- Binomial tree pricing
 - improved calibration algorithms
-- GPU acceleration for Monte Carlo
+- Variance reduction techniques for Monte Carlo
